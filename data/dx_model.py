@@ -80,3 +80,20 @@ class Exposure(Base):
     AERODEF = Column(Float(53))
     Conglomerates = Column(Float(53))
     COUNTRY = Column(Float(53))
+
+
+class IndexMarket(Base):
+    __tablename__ = 'index_market'
+    __table_args__ = (
+        Index('market_idx', 'trade_date', 'indexCode', unique=True),
+    )
+    trade_date = Column(DateTime, primary_key=True, nullable=False)
+    indexCode = Column(String, primary_key=True, nullable=False)
+    preCloseIndex = Column(Float(53))
+    openIndex = Column(Float(53))
+    highestIndex = Column(Float(53))
+    lowestIndex = Column(Float(53))
+    closeIndex = Column(Float(53))
+    turnoverVol = Column(BigInteger)
+    turnoverValue = Column(Float(53))
+    chgPct = Column(Float(53))

@@ -80,3 +80,25 @@ class Exposure(Base):
     AERODEF = Column(Float(53))
     Conglomerates = Column(Float(53))
     COUNTRY = Column(Float(53))
+
+
+class IndexMarket(Base):
+    __tablename__ = 'index_daily_price'
+    __table_args__ = (
+        Index('id', 'trade_date', 'security_code', unique=True),
+    )
+    id = Column(VARCHAR(32), primary_key=True)
+    #symbol = Column(VARCHAR(24), primary_key=True)
+    security_code = Column(VARCHAR(24), primary_key=True)
+    exchange = Column(VARCHAR(24))
+    trade_date = Column(DATE, primary_key=True)
+    name = Column(VARCHAR(50))
+    pre_close = Column(DECIMAL(15, 6))
+    open = Column(DECIMAL(15, 6))
+    close = Column(DECIMAL(15, 6))
+    high = Column(DECIMAL(15, 6))
+    low = Column(DECIMAL(15, 6))
+    volume = Column(DECIMAL(20, 2))
+    money = Column(DECIMAL(18, 3))
+    change = Column(DECIMAL(9, 4))
+    change_pct = Column(DECIMAL(8, 4))

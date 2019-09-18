@@ -48,7 +48,12 @@ class FetchRLEngine(FetchEngine):
     def exposure(self, begin_date, end_date, freq = None):
         table = importlib.import_module('data.rl_model').Exposure
         return self.base(table, begin_date, end_date, freq)
-    
+
+    def index_market(self, begin_date, end_date, freq = None):
+        table = importlib.import_module('data.rl_model').IndexMarket
+        return self.base(table, begin_date, end_date, freq)
+
+
 class FetchDXEngine(FetchEngine):
     def __init__(self):
         super(FetchDXEngine, self).__init__('dx','postgresql+psycopg2://alpha:alpha@180.166.26.82:8889/alpha')
@@ -59,6 +64,10 @@ class FetchDXEngine(FetchEngine):
     
     def exposure(self, begin_date, end_date, freq = None):
         table = importlib.import_module('data.dx_model').Exposure
+        return self.base(table, begin_date, end_date, freq)
+
+    def index_market(self, begin_date, end_date, freq = None):
+        table = importlib.import_module('data.dx_model').IndexMarket
         return self.base(table, begin_date, end_date, freq)
 
 
@@ -83,8 +92,26 @@ class ExposureFactory(EngineFactory):
     def result(self, begin_date, end_date, freq=None):
         return self._fetch_engine.exposure(begin_date, end_date, freq)
 
-if  __name__=="__main__":
-    market_factory = ExposureFactory(FetchDXEngine)
+class IndexMarketFactory(EngineFactory):
+    def __init__(self, engine_class):
+        self._fetch_engine = self.create_engine(engine_class)
+
+    def result(self, begin_date, end_date, freq=None):
+        return self._fetch_engine.index_market(begin_date, end_date, freq)
+
+
+if __name__ == "__main__":
+    # market_factory = ExposureFactory(FetchDXEngine)
+    # begin_date = '2018-12-01'
+    # end_date = '2018-12-31'
+    # print(market_factory.result(begin_date, end_date))
+
+    # index_market_factory = IndexMarketFactory(FetchDXEngine)
+    # begin_date = '2018-12-01'
+    # end_date = '2018-12-10'
+    # print(index_market_factory.result(begin_date, end_date))
+
+    index_market_factory = IndexMarketFactory(FetchRLEngine)
     begin_date = '2018-12-01'
-    end_date = '2018-12-31'
-    print(market_factory.result(begin_date, end_date))
+    end_date = '2018-12-10'
+    print(index_market_factory.result(begin_date, end_date))

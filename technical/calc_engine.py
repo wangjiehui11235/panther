@@ -8,16 +8,18 @@ from data.polymerize import DBPolymerize
 from data.storage_engine import StorageEngine
 from ultron.cluster.invoke.cache_data import cache_data
 from alphax import app
+import pickle
 
 class CalcEngine(object):
-    def __init__(self, name, url, methods=[{'packet':'technical.price_volume','class':'PriceVolume'},
-                                           {'packet':'technical.power_volume','class':'PowerVolume'},
-                                           {'packet':'technical.sentiment','class':'Sentiment'},
-                                           {'packet':'technical.reversal','class':'Reversal'},
-                                           {'packet':'technical.momentum','class':'Momentum'}
-                                            #{'packet':'technical.trend','class':'Trend'}
-                                          ]):
-        self._name= name
+    # def __init__(self, name, url, methods=[{'packet':'technical.price_volume','class':'PriceVolume'},
+    #                                        {'packet':'technical.power_volume','class':'PowerVolume'},
+    #                                        {'packet':'technical.sentiment','class':'Sentiment'},
+    #                                        {'packet':'technical.reversal','class':'Reversal'},
+    #                                        {'packet':'technical.momentum','class':'Momentum'}
+    #                                         #{'packet':'technical.trend','class':'Trend'}
+    #                                       ]):
+    def __init__(self, name, url, methods=[{'packet': 'technical.volatility_value', 'class': 'VolatilityValue'}]):
+        self._name = name
         self._methods = methods
         self._url = url
         self._INDU_STYLES = ['Bank','RealEstate','Health','Transportation','Mining','NonFerMetal',
@@ -49,8 +51,7 @@ class CalcEngine(object):
             max_window = self._method_max_windows(method['packet'],method['class'])
             alpha_max_window = max_window if max_window > alpha_max_window else alpha_max_window
         return alpha_max_window
-        
-        
+
     def calc_factor_by_date(self, data, trade_date):
         trade_date_list = list(set(data.trade_date))
         trade_date_list.sort(reverse=False)
@@ -79,14 +80,39 @@ class CalcEngine(object):
         total_data['returns'] = total_data['close_price'].pct_change()
         #total_data['indu'] = indu_dict
         return total_data
-    
-    
+
+    def calc_index_by_date(self, data, trade_date):
+        """
+        提取
+        :param data:
+        :param trade_date:
+        :return:
+        """
+        if self._name == 'dx':
+            index_data = data[data.index_code == 300]
+            index_data = index_data.set_index('trade_date').drop(['index_code'], axis=1)
+        else:
+            index_data = data[data.security_code == '2070000060']
+            index_data = index_data.set_index('trade_date').drop(['id','security_code','exchange','name_index'], axis=1)
+
+        index_data.index = pd.to_datetime(index_data.index, format='%Y-%m-%d')
+        index_data.sort_index(inplace=True)
+
+        total_data = {}
+        for col in index_data.columns:
+            total_data[col] = index_data[col]
+
+        total_data['returns_index'] = total_data.pop('chg_pct_index')
+        return total_data
+
     def loadon_data(self, trade_date):
         db_polymerize = DBPolymerize(self._name)
         max_windows = self._maximization_windows()
         begin_date = advanceDateByCalendar('china.sse', trade_date, '-%sb' % (max_windows + 1))
         total_data = db_polymerize.fetch_data(begin_date, trade_date,'1b')
-        return total_data
+        # total_data = None  # 调试
+        total_index_data = db_polymerize.fetch_index_data(begin_date, trade_date, '1b')
+        return total_data, total_index_data
     
     def process_calc(self, params):
         [class_name, packet_name, func, data] = params
@@ -114,7 +140,8 @@ class CalcEngine(object):
             data = {}
             for dep in dependencies:
                 if dep not in ['indu']:
-                    data[dep] = mkt_df[dep].loc[begin.strftime("%Y-%m-%d"):trade_date]
+                    # data[dep] = mkt_df[dep].loc[begin.strftime("%Y-%m-%d"):trade_date]
+                    data[dep] = mkt_df[dep].loc[begin:datetime.datetime.strptime(trade_date, '%Y-%m-%d')]
                 else:
                     data['indu'] = mkt_df['indu']
             calc_factor_list.append([class_name, packet_name, func, data])
@@ -160,14 +187,23 @@ class CalcEngine(object):
         return result.replace([np.inf, -np.inf], np.nan)
     
     def local_run(self, trade_date):
-        total_data = self.loadon_data(trade_date)
+        total_data, total_index_data = self.loadon_data(trade_date)
         mkt_df = self.calc_factor_by_date(total_data,trade_date)
+        index_se = self.calc_index_by_date(total_index_data,trade_date)
+        mkt_df.update(index_se)
+
+        # temp 保存数据供调试
+        # with open('mkt_df.pkl', 'wb') as f:
+        #     pickle.dump(mkt_df, f, pickle.HIGHEST_PROTOCOL)
+
+        # with open('./mkt_df.pkl', 'rb') as f:
+        #     mkt_df = pickle.load(f)
+
         storage_engine = StorageEngine(self._url)
         for method in self._methods:
             result = self.process_calc_factor(method['packet'],method['class'],mkt_df,trade_date)
             storage_engine.update_destdb(str(method['packet'].split('.')[-1]), trade_date, result)
-        
-        
+
     def remote_run(self, trade_date):
         total_data = self.loadon_data(trade_date)
         #存储数据
