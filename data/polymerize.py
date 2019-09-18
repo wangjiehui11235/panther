@@ -84,7 +84,6 @@ class DBPolymerize(object):
             'index_market':IndexMarketFactory(FetchEngine.create_engine(name))
         }
         self._adaptation = Adaptation.create_adaptation(name)
-        
      
     def fetch_data(self, begin_date, end_date, freq=None):
         market_data = self._factory_sets['market'].result(begin_date, end_date, freq)
