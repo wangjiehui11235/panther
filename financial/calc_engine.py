@@ -11,13 +11,7 @@ from alphax import app
 import pickle
 
 class CalcEngine(object):
-    def __init__(self, name, url, methods=[{'packet':'technical.price_volume','class':'PriceVolume'},
-                                           {'packet':'technical.power_volume','class':'PowerVolume'},
-                                           {'packet':'technical.sentiment','class':'Sentiment'},
-                                           {'packet':'technical.reversal','class':'Reversal'},
-                                           {'packet':'technical.momentum','class':'Momentum'}
-                                            #{'packet':'technical.trend','class':'Trend'}
-                                          ]):
+    def __init__(self, name, url, methods=[{'packet': 'financial.volatility_value', 'class': 'VolatilityValue'}]):
         self._name = name
         self._methods = methods
         self._url = url
@@ -190,6 +184,14 @@ class CalcEngine(object):
         mkt_df = self.calc_factor_by_date(total_data,trade_date)
         index_se = self.calc_index_by_date(total_index_data,trade_date)
         mkt_df.update(index_se)
+
+        # temp 保存数据供调试
+        # with open('mkt_df.pkl', 'wb') as f:
+        #     pickle.dump(mkt_df, f, pickle.HIGHEST_PROTOCOL)
+
+        # with open('./mkt_df.pkl', 'rb') as f:
+        #     mkt_df = pickle.load(f)
+
         storage_engine = StorageEngine(self._url)
         for method in self._methods:
             result = self.process_calc_factor(method['packet'],method['class'],mkt_df,trade_date)

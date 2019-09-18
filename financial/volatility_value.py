@@ -12,7 +12,7 @@ class VolatilityValue(object):
         self.name = '收益风险'
         self.factor_type1 = '收益风险'
         self.factor_type2 = '收益风险'
-        self.desciption = '主要用于衡量收益波动性'
+        self.description = '主要用于衡量收益波动性'
 
     def _VarianceXD(self, data, timeperiod):
         """
