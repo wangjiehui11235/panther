@@ -19,8 +19,9 @@ if __name__ == "__main__":
     calc_engine = CalcEngine('rl','mysql+mysqlconnector://factor_edit:factor_edit_2019@db1.irongliang.com/vision?charset=utf8')
     # print(calc_engine.local_run('2018-12-28'))
 
-    begin_date = '2017-08-26'
-    end_date = '2019-08-26'
+    # begin_date = '2017-08-26'
+    begin_date = '2019-08-26'
+    end_date = '2019-08-27'
     freq = '1b'
     rebalance_dates = makeSchedule(begin_date, end_date, freq, 'china.sse', BizDayConventions.Preceding)
     #rebalance_dates=[datetime.datetime(2019,8,26)]
