@@ -433,41 +433,41 @@ if __name__ == "__main__":
     print("-----------Variance20D-----------")
     print(process.Variance20D(data))
 
-    print("-----------Kurtosis20D-----------")
-    print(process.Kurtosis20D(data))
-
-    print("-----------Alpha20D-----------")
-    print(process.Alpha120D(data))
-
-    print("-----------BetaXD-----------")
-    print(process.Beta252D(data))
-
-    print("-----------SharpeXD-----------")
-    print(process.Sharpe120D(data))
-
-    print("-----------TRXD-----------")
-    print(process.TR120D(data))
-
-    print("-----------IRXD-----------")
-    print(process.IR120D(data))
-
-    print("-----------GainVarianceXD-----------")
-    print(process.GainVariance120D(data))
-
-    print("-----------LossVarianceXD-----------")
-    print(process.LossVariance60D(data))
-
-    print("-----------GainLossVarianceRatioXD-----------")
-    print(process.GainLossVarianceRatio60D(data))
-
-    print("-----------DDNSR12M-----------")
-    print(process.DDNSR12M(data))
-
-    print("-----------DDNCR12M-----------")
-    print(process.DDNCR12M(data))
-
-    print("-----------DVRAT-----------")
-    print(process.DVRAT(data))
+    # print("-----------Kurtosis20D-----------")
+    # print(process.Kurtosis20D(data))
+    #
+    # print("-----------Alpha20D-----------")
+    # print(process.Alpha120D(data))
+    #
+    # print("-----------BetaXD-----------")
+    # print(process.Beta252D(data))
+    #
+    # print("-----------SharpeXD-----------")
+    # print(process.Sharpe120D(data))
+    #
+    # print("-----------TRXD-----------")
+    # print(process.TR120D(data))
+    #
+    # print("-----------IRXD-----------")
+    # print(process.IR120D(data))
+    #
+    # print("-----------GainVarianceXD-----------")
+    # print(process.GainVariance120D(data))
+    #
+    # print("-----------LossVarianceXD-----------")
+    # print(process.LossVariance60D(data))
+    #
+    # print("-----------GainLossVarianceRatioXD-----------")
+    # print(process.GainLossVarianceRatio60D(data))
+    #
+    # print("-----------DDNSR12M-----------")
+    # print(process.DDNSR12M(data))
+    #
+    # print("-----------DDNCR12M-----------")
+    # print(process.DDNCR12M(data))
+    #
+    # print("-----------DVRAT-----------")
+    # print(process.DVRAT(data))
 
 
 

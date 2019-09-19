@@ -8,20 +8,19 @@ warnings.filterwarnings("ignore")
 
 if __name__ == "__main__":
 
-    rebuild = Rebuild('mysql+mysqlconnector://factor_edit:factor_edit_2019@db1.irongliang.com/vision?charset=utf8')
+    # rebuild = Rebuild('mysql+mysqlconnector://factor_edit:factor_edit_2019@db1.irongliang.com/vision?charset=utf8')
     # rebuild.rebuild_table('technical.price_volume','PriceVolume')
     # rebuild.rebuild_table('technical.momentum','Momentum')
     # rebuild.rebuild_table('technical.power_volume','PowerVolume')
     # rebuild.rebuild_table('technical.reversal','Reversal')
     # rebuild.rebuild_table('technical.sentiment','Sentiment')
-    rebuild.rebuild_table('financial.volatility_value', 'VolatilityValue')
+    # rebuild.rebuild_table('financial.volatility_value', 'VolatilityValue')
     
     calc_engine = CalcEngine('rl','mysql+mysqlconnector://factor_edit:factor_edit_2019@db1.irongliang.com/vision?charset=utf8')
     # print(calc_engine.local_run('2018-12-28'))
 
-    # begin_date = '2017-08-26'
-    begin_date = '2019-08-26'
-    end_date = '2019-08-27'
+    begin_date = '2017-01-01'
+    end_date = '2019-09-01'
     freq = '1b'
     rebalance_dates = makeSchedule(begin_date, end_date, freq, 'china.sse', BizDayConventions.Preceding)
     #rebalance_dates=[datetime.datetime(2019,8,26)]
